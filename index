@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Calm Storm Hub v1 | Structural & Materials Hub</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #e2e8f0;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
+            padding: 24px 16px;
+        }
+
+        /* main hub card */
+        .hub-container {
+            max-width: 780px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        /* header branding */
+        .hub-header {
+            background: linear-gradient(135deg, #0b2b3b 0%, #1a4a5f 100%);
+            padding: 24px 28px;
+            color: white;
+        }
+        .hub-header h1 {
+            font-size: 1.9rem;
+            letter-spacing: -0.02em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .hub-header h1 span {
+            background: #ffcd4a;
+            font-size: 1rem;
+            padding: 4px 10px;
+            border-radius: 60px;
+            color: #1e2f3a;
+            font-weight: 600;
+        }
+        .hub-header p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 8px;
+            font-family: monospace;
+        }
+
+        /* tab navigation */
+        .tab-bar {
+            display: flex;
+            background: #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 0 12px;
+            gap: 8px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 28px 28px 0 0;
+            transition: 0.2s;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn i {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #0f3b4c;
+            border-bottom: 3px solid #ffa62b;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.02);
+        }
+        .tab-btn:hover:not(.active) {
+            background: #e6edf4;
+        }
+
+        /* content panels */
+        .tab-pane {
+            display: none;
+            padding: 28px 28px 32px;
+            background: white;
+            animation: fade 0.25s ease;
+        }
+        .tab-pane.active-pane {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* forms & styles (unified) */
+        .calc-section {
+            margin-bottom: 30px;
+        }
+        .calc-section h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0c4a6e;
+            border-left: 4px solid #ffa62b;
+            padding-left: 14px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 18px;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: flex-end;
+        }
+        .input-row .input-group {
+            flex: 1;
+            min-width: 130px;
+        }
+        input, .mock-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: 0.2s;
+            background: #fefefe;
+            font-family: inherit;
+        }
+        input:focus {
+            outline: none;
+            border-color: #ffa62b;
+            box-shadow: 0 0 0 3px rgba(255,166,43,0.2);
+        }
+        button.calc-btn {
+            background: #1e3b4a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        button.calc-btn:hover {
+            background: #0f2f3c;
+            transform: translateY(-1px);
+        }
+        .result-card {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 18px 22px;
+            margin-top: 20px;
+            border: 1px solid #e2edf2;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        .result-card strong {
+            color: #0b3b49;
+        }
+        hr {
+            margin: 20px 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+        .badge {
+            display: inline-block;
+            background: #eef2ff;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 32px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            margin-top: 6px;
+        }
+        .status-safe { background: #d1fae5; color: #065f46; }
+        .status-warning { background: #fed7aa; color: #9b2c1d; }
+        .status-danger { background: #ffe4e2; color: #b91c1c; }
+        .footer-meta {
+            font-size: 0.7rem;
+            text-align: center;
+            background: #f1f5f9;
+            padding: 14px;
+            color: #475569;
+            border-top: 1px solid #e2e8f0;
+        }
+        @media (max-width: 550px) {
+            .tab-btn { padding: 10px 14px; font-size: 0.8rem;}
+            .hub-header h1 { font-size: 1.5rem;}
+            .tab-pane { padding: 20px;}
+        }
+        .inline-icon {
+            font-size: 1.1rem;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="hub-container">
+    <div class="hub-header">
+        <h1>
+            🌩️ CALM STORM HUB v1 
+            <span>structural core</span>
+        </h1>
+        <p>▸ Materials estimator + reinforced concrete column predictor (BS8110 / advanced logic)</p>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="materials">📦 Materials Calculator</button>
+        <button class="tab-btn" data-tab="column">🏗️ RC Column Analyzer</button>
+    </div>
+
+    <!-- TAB 1: BUILDING MATERIALS (Chippings, Sand, Cement, Iron Rods) -->
+    <div id="materials-pane" class="tab-pane active-pane">
+        <div class="calc-section">
+            <h3>🪨 Chippings · Coarse Aggregate</h3>
+            <div class="input-group">
+                <label>Concrete Volume (m³)</label>
+                <input type="number" id="chippings_vol" step="0.01" placeholder="e.g., 5.25">
+            </div>
+            <button class="calc-btn" id="btnChippings">➤ Calculate Tons</button>
+            <div id="chippings_result" class="result-card" style="margin-top: 16px;">— tons —</div>
+        </div>
+        <hr>
+
+        <div class="calc-section">
+            <h3>🏖️ Sand · Fine Aggregate</h3>
+            <div class="input-group">
+                <label>Concrete Volume (m³)</label>
+                <input type="number" id="sand_vol" step="0.01" placeholder="e.g., 5.25">
+            </div>
+            <button class="calc-btn" id="btnSand">➤ Calculate Sand (Tons)</button>
+            <div id="sand_result" class="result-card">— tons —</div>
+        </div>
+        <hr>
+
+        <div class="calc-section">
+            <h3>🧱 Cement · Bags Estimate</h3>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Concrete Volume (m³)</label>
+                    <input type="number" id="cement_vol" step="0.01" placeholder="Volume">
+                </div>
+                <div class="input-group">
+                    <label>Mix Ratio Sum (e.g., 1:2:4 = 7)</label>
+                    <input type="number" id="mix_ratio_sum" step="0.01" value="7" placeholder="sum">
+                </div>
+            </div>
+            <button class="calc-btn" id="btnCement">➤ Calculate Cement Bags</button>
+            <div id="cement_result" class="result-card">— bags —</div>
+        </div>
+        <hr>
+
+        <div class="calc-section">
+            <h3>📏 Iron Rods · Full-length pieces (12m standard)</h3>
+            <div class="grid-2col">
+                <div class="input-group">
+                    <label>Length of Rod (m)</label>
+                    <input type="number" id="rod_length_m" step="0.01" placeholder="cut length">
+                </div>
+                <div class="input-group">
+                    <label>Number of Bars</label>
+                    <input type="number" id="num_bars_qty" step="1" placeholder="bars">
+                </div>
+            </div>
+            <button class="calc-btn" id="btnRods">➤ Compute full rods to buy</button>
+            <div id="rods_result" class="result-card">— pieces —</div>
+        </div>
+        <div class="footer-meta" style="background: none; padding-top: 8px;">⚡ Material factors: Chippings 0.92 t/m³ • Sand 0.46 t/m³ • Cement dry factor 1.54 • 1 bag = 0.035 m³</div>
+    </div>
+
+    <!-- TAB 2: RC COLUMN PREDICTOR (Advanced Lab Engine) -->
+    <div id="column-pane" class="tab-pane">
+        <div class="calc-section">
+            <h3>📐 Axial Column · BS8110 Logic</h3>
+            <div class="grid-2col">
+                <div class="input-group">
+                    <label>Axial Load P (kN)</label>
+                    <input type="number" id="axial_load" value="600" step="10">
+                </div>
+                <div class="input-group">
+                    <label>Width b (mm)</label>
+                    <input type="number" id="col_width" value="225" step="5">
+                </div>
+                <div class="input-group">
+                    <label>Depth h (mm)</label>
+                    <input type="number" id="col_depth" value="225" step="5">
+                </div>
+                <div class="input-group">
+                    <label>Concrete fcu (N/mm²)</label>
+                    <input type="number" id="col_fcu" value="25" step="5">
+                </div>
+                <div class="input-group">
+                    <label>Steel fy (N/mm²)</label>
+                    <input type="number" id="col_fy" value="410" step="10">
+                </div>
+            </div>
+            <button class="calc-btn" id="btnColumnAnalyze">⚙️ Analyze & Predict Reinforcement</button>
+            <div id="column_output" class="result-card" style="background: #fef9e8;">
+                ⚡ Adjust parameters and run analysis. Structural diagnostics output will appear here.
+            </div>
+        </div>
+        <div class="footer-meta" style="margin-top: 8px;">🔍 Engine considers 0.4% min steel, 6% max, concrete constant (0.4·Ac·fcu)/(0.67·fy). Automatic bar suggestion (Y12–Y32) with symmetrical distribution.</div>
+    </div>
+</div>
+
+<script>
+    // ======================== HELPER: validation ========================
+    function isValidNumber(val) {
+        return !isNaN(val) && val !== null && val !== '' && parseFloat(val) > 0;
+    }
+
+    // ================ MATERIALS SECTION (original logic merged) ================
+    // Chippings
+    const chippingsVol = document.getElementById('chippings_vol');
+    const chippingsRes = document.getElementById('chippings_result');
+    document.getElementById('btnChippings').addEventListener('click', () => {
+        let vol = parseFloat(chippingsVol.value);
+        if (!isValidNumber(vol)) {
+            chippingsRes.innerHTML = '❌ Please enter a valid concrete volume (>0)';
+            return;
+        }
+        let tons = vol * 0.92;
+        chippingsRes.innerHTML = `✅ Required Chippings: <strong>${tons.toFixed(2)} Tons</strong> (${vol} m³ × 0.92 t/m³)`;
+    });
+
+    // Sand
+    const sandVol = document.getElementById('sand_vol');
+    const sandRes = document.getElementById('sand_result');
+    document.getElementById('btnSand').addEventListener('click', () => {
+        let vol = parseFloat(sandVol.value);
+        if (!isValidNumber(vol)) {
+            sandRes.innerHTML = '❌ Please enter a valid concrete volume';
+            return;
+        }
+        let tons = vol * 0.46;
+        sandRes.innerHTML = `✅ Required Sand: <strong>${tons.toFixed(2)} Tons</strong> (${vol} m³ × 0.46 t/m³)`;
+    });
+
+    // Cement
+    const cementVol = document.getElementById('cement_vol');
+    const mixRatioSum = document.getElementById('mix_ratio_sum');
+    const cementRes = document.getElementById('cement_result');
+    document.getElementById('btnCement').addEventListener('click', () => {
+        let vol = parseFloat(cementVol.value);
+        let ratio = parseFloat(mixRatioSum.value);
+        if (!isValidNumber(vol) || !isValidNumber(ratio)) {
+            cementRes.innerHTML = '❌ Valid volume and mix ratio sum required (e.g., 1+2+4=7)';
+            return;
+        }
+        const dryVolume = vol * 1.54;
+        const cementM3 = dryVolume * (1 / ratio);
+        const bags = cementM3 / 0.035;
+        const bagsCeil = Math.ceil(bags);
+        cementRes.innerHTML = `✅ Cement Required: <strong>${bagsCeil} Bags</strong> (Approx. ${bags.toFixed(1)} bags theoretical) <br> <span class="badge">dry factor 1.54, bag=0.035m³</span>`;
+    });
+
+    // Iron Rods (precise logic from original)
+    const rodLengthInput = document.getElementById('rod_length_m');
+    const numBarsInput = document.getElementById('num_bars_qty');
+    const rodsResultDiv = document.getElementById('rods_result');
+    document.getElementById('btnRods').addEventListener('click', () => {
+        let rodLength = parseFloat(rodLengthInput.value);
+        let numBars = parseInt(numBarsInput.value);
+        if (isNaN(rodLength) || rodLength <= 0 || isNaN(numBars) || numBars <= 0) {
+            rodsResultDiv.innerHTML = '❌ Please enter valid rod length (>0) and number of bars (>=1)';
+            return;
+        }
+        const totalStructuralLength = rodLength * numBars;
+        const fullLengthRods = Math.ceil(totalStructuralLength / 12);
+        rodsResultDiv.innerHTML = `📦 Total Full Rods (12m) to Buy: <strong>${fullLengthRods} Pieces</strong> <br> <span style="font-size:0.8rem;">Total needed length: ${totalStructuralLength.toFixed(2)} m ÷ 12 m/rod = ${(totalStructuralLength/12).toFixed(2)} → ceiling</span>`;
+    });
+
+    // ================ RC COLUMN PREDICTOR (Enhanced Lab Engine, fully integrated) ================
+    const loadInput = document.getElementById('axial_load');
+    const widthInput = document.getElementById('col_width');
+    const depthInput = document.getElementById('col_depth');
+    const fcuInput = document.getElementById('col_fcu');
+    const fyInput = document.getElementById('col_fy');
+    const columnOutput = document.getElementById('column_output');
+
+    function computeColumnSteel() {
+        let P = parseFloat(loadInput.value);
+        let b = parseFloat(widthInput.value);
+        let h = parseFloat(depthInput.value);
+        let fcu = parseFloat(fcuInput.value);
+        let fy = parseFloat(fyInput.value);
+
+        if (isNaN(P) || isNaN(b) || isNaN(h) || isNaN(fcu) || isNaN(fy)) {
+            columnOutput.innerHTML = '❌ Please enter valid numbers in all column fields (positive numeric).';
+            return;
+        }
+        if (b <= 0 || h <= 0 || P <= 0 || fcu <= 0 || fy <= 0) {
+            columnOutput.innerHTML = '❌ Dimensions, load, and strengths must be greater than zero.';
+            return;
+        }
+
+        let Ac = b * h;                       // mm²
+        let As_min = 0.004 * Ac;              // 0.4% min reinforcement
+        let As_max = 0.06 * Ac;               // 6% max congestion limit
+
+        // Concrete Constant based on BS8110-style derivation (original optimized engine)
+        // (0.4 * Ac * fcu) / (0.67 * fy)
+        let concreteConstant = (0.4 * Ac * fcu) / (0.67 * fy);
+        let RawAs = ((1.5 * P * 1000) / fy) - concreteConstant;   // derived from load equilibrium
+
+        let finalAs = RawAs;
+        let diagnosticNote = "";
+        let statusHTML = "";
+
+        // advanced diagnostics (same logic flow as original second code)
+        if (RawAs < 0) {
+            finalAs = As_min;
+            statusHTML = "<span class='status-badge status-warning'>⚠️ CONCRETE DOMINANT</span>";
+            diagnosticNote = "Concrete section alone resists the axial load. Nominal reinforcement (0.4%) applied for ductility and crack control.";
+        } else if (RawAs < As_min) {
+            finalAs = As_min;
+            statusHTML = "<span class='status-badge status-safe'>✓ MINIMUM REBAR CONTROL</span>";
+            diagnosticNote = "Calculated steel requirement below 0.4% code lower bound. Upgraded to minimum reinforcement for structural integrity.";
+        } else if (RawAs > As_max) {
+            finalAs = As_max;   // we bound at max, but still flag congestion
+            statusHTML = "<span class='status-badge status-danger'>⚠️ CONGESTION FAILURE</span>";
+            diagnosticNote = `CRITICAL: Required steel (${RawAs.toFixed(0)} mm²) exceeds 6% of concrete area (${As_max.toFixed(0)} mm²). Rebar cannot fit safely. Increase column dimensions or use higher concrete grade.`;
+        } else {
+            finalAs = RawAs;
+            statusHTML = "<span class='status-badge status-safe'>✅ STRUCTURALLY OPTIMIZED</span>";
+            diagnosticNote = "Perfect equilibrium — steel ratio within 0.4%–6% range. Efficient design with optimal material usage.";
+        }
+
+        // Intelligent bar selection routine (as per original but refined)
+        let rebarSuggestion = "— Increase section to compute —";
+        let providedAreaMsg = "";
+
+        if (finalAs > 0 && finalAs <= As_max * 1.05) { // allow small overflow but still bounded
+            const standardBars = [12, 16, 20, 25, 32];
+            let bestMatch = null;
+            for (let size of standardBars) {
+                let singleBarArea = (Math.PI * Math.pow(size, 2)) / 4;
+                let countRequired = Math.ceil(finalAs / singleBarArea);
+                // columns need at least 4 bars (corners)
+                if (countRequired < 4) countRequired = 4;
+                // ensure even count for symmetrical ties (usually even number practical)
+                if (countRequired % 2 !== 0) countRequired++;
+                let providedArea = countRequired * singleBarArea;
+                if (providedArea >= finalAs) {
+                    bestMatch = { size, count: countRequired, area: providedArea };
+                    break;
+                }
+            }
+            if (bestMatch) {
+                rebarSuggestion = `${bestMatch.count}x Y${bestMatch.size} bars (Provided As: ${bestMatch.area.toFixed(0)} mm²)`;
+                providedAreaMsg = ` | Provided area ${bestMatch.area.toFixed(0)} mm² ≥ required ${finalAs.toFixed(0)} mm²`;
+            } else {
+                rebarSuggestion = "Use higher bar diameters (Y32 or bundled) or increase column size.";
+            }
+        } else if (finalAs > As_max) {
+            rebarSuggestion = "❌ Section insufficient – revise dimensions (increase width/depth or fcu).";
+        } else {
+            rebarSuggestion = "Adjust geometry or load to calculate bar layout.";
+        }
+
+        // additional safety notes for very low concrete strength
+        let extraNote = "";
+        if (fcu < 20) extraNote = " <br>⚠️ Low concrete grade may affect durability. Consider fcu ≥ 20 N/mm² for structural columns.";
+
+        // final injection
+        columnOutput.innerHTML = `
+            <div><strong>📐 Section:</strong> ${b} x ${h} mm (Ac = ${Ac.toFixed(0)} mm²)</div>
+            <div><strong>🧪 Raw As (calc):</strong> ${RawAs.toFixed(1)} mm²</div>
+            <div><strong>⚙️ Design Steel Target (As):</strong> <span style="font-size: 1.35rem; font-weight:800; color:#1f3c88;">${finalAs.toFixed(1)} mm²</span></div>
+            <div style="margin-top: 12px;"><strong>📌 Suggested Reinforcement:</strong><br> <span style="background:#eef2ff; padding:6px 12px; border-radius: 40px; display:inline-block;">${rebarSuggestion}</span>${providedAreaMsg}</div>
+            <div style="margin: 12px 0 5px 0;">${statusHTML}</div>
+            <p style="font-size:0.85rem; color:#334155; margin-top: 10px;">🔍 ${diagnosticNote}${extraNote}</p>
+            <hr style="margin: 10px 0;">
+            <div style="font-size:0.75rem; color:#4b5563;"><span class="badge">Code limits: min 0.4% (${As_min.toFixed(0)} mm²) | max 6% (${As_max.toFixed(0)} mm²)</span></div>
+        `;
+    }
+
+    document.getElementById('btnColumnAnalyze').addEventListener('click', computeColumnSteel);
+    // initial run on page load for column (demo values)
+    window.addEventListener('DOMContentLoaded', () => {
+        computeColumnSteel();
+        // also set default placeholder outputs for materials results (optional)
+        document.getElementById('chippings_result').innerHTML = '— tons —';
+        document.getElementById('sand_result').innerHTML = '— tons —';
+        document.getElementById('cement_result').innerHTML = '— bags —';
+        document.getElementById('rods_result').innerHTML = '— pieces —';
+    });
+
+    // ==================== TAB SWITCHING LOGIC ====================
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panes = {
+        materials: document.getElementById('materials-pane'),
+        column: document.getElementById('column-pane')
+    };
+
+    function switchTab(tabId) {
+        // deactivate all panes
+        Object.values(panes).forEach(pane => {
+            pane.classList.remove('active-pane');
+        });
+        tabBtns.forEach(btn => btn.classList.remove('active'));
+        if (tabId === 'materials') {
+            panes.materials.classList.add('active-pane');
+            document.querySelector('.tab-btn[data-tab="materials"]').classList.add('active');
+        } else if (tabId === 'column') {
+            panes.column.classList.add('active-pane');
+            document.querySelector('.tab-btn[data-tab="column"]').classList.add('active');
+            // rerun column analysis to refresh view after possible sizing
+            computeColumnSteel();
+        }
+    }
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tab = btn.getAttribute('data-tab');
+            if (tab === 'materials') switchTab('materials');
+            else if (tab === 'column') switchTab('column');
+        });
+    });
+</script>
+</body>
+</html>
